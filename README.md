@@ -1,7 +1,8 @@
-AS3935-Arduino-Library
+AS3935-Spark-Library
 ======================
 
 AS3935 Franklin Lightning Sensor™ IC by AMS Arduino library
+- Adapted for Spark Core, by Paul Kourany Apr 23, 2014
 
 Link to manufacturer site:
 
@@ -18,25 +19,21 @@ Link to my blog:
 To use is chip/board, you will definitely need to read it's datasheet, so
 I am not going to dwell into details of tuning and using this small gem.
 
-Tested with Arduino 1.0.1 on Arduino Mega 2560 and mpide-0023-20120903-newlib on
-chipKIT Max32.
+Not yet tested with Spark Core.
 
-Connections between breakout by TAUTIC LLC and chipKIT Max32 or Arduino Mega 2560
+Connections between breakout by TAUTIC LLC and Spark Core
 for example code to work:
 
-	breakout pin    arduino pin
+	breakout pin    Spark pin
 
-	VDD             3.3V - Max32, 5V - Mega 2560
+	VDD             3.3V
 	GND             GND
-	MOSI            51
-	MISO            50
-	SCLK            52
-	IRQ             2
+	MOSI            A5
+	MISO            A4
+	SCLK            A3
+	IRQ             D2 (or any other valid pin)
 	SI              GND
-	CS              53
-
-NB! on Mega 2560 you have to comment out attachInterrupt(1,AS3935Irq,RISING); line and
-uncomment attachInterrupt(0,AS3935Irq,RISING); line
+	CS              A2
 
 Short function reference:
 	AS3935(byte (*SPItransfer)(byte),int csPin,int irq);
