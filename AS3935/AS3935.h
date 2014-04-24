@@ -15,18 +15,14 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  
+  Adapted for Spark Core by Paul Kourany, Apr. 23, 2014
 */
 
 #ifndef AS3935_h
 #define AS3935_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif
-
-#include <limits.h>
+#include "application.h"
 
 // register access macros - register address, bitmask
 #define AS3935_AFE_GB		0x00, 0x3E
