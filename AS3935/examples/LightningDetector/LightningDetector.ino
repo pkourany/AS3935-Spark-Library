@@ -1,5 +1,5 @@
 /*
-  LightningDetector.pde - AS3935 Franklin Lightning Sensor™ IC by AMS library demo code
+  LightningDetector.ino - AS3935 Franklin Lightning Sensor™ IC by AMS library demo code
   Copyright (c) 2012 Raivis Rengelis (raivis [at] rrkb.lv). All rights reserved.
 
   This library is free software; you can redistribute it and/or
@@ -15,10 +15,12 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  
+  Adapted for Spark Core by Paul Kourany, Apr. 23, 2014
 */
 
-#include <SPI.h>
-#include <AS3935.h>
+
+#include "AS3935.h"
 
 void printAS3935Registers();
 
@@ -39,13 +41,15 @@ byte SPItransfer(byte sendByte);
 void AS3935Irq();
 volatile int AS3935IrqTriggered;
 
-// First parameter - SPI transfer function, second - Arduino pin used for CS
-// and finally third argument - Arduino pin used for IRQ
+// First parameter - SPI transfer function, second - Spark pin used for CS
+// and finally third argument - Spark pin used for IRQ
 // It is good idea to chose pin that has interrupts attached, that way one can use
 // attachInterrupt in sketch to detect interrupt
 // Library internally polls this pin when doing calibration, so being an interrupt pin
 // is not a requirement
-AS3935 AS3935(SPItransfer,SS,2);
+#define IRQpin  D2      //On Spark, can be any of: D0, D1, D2, D3, D4, A0, A1, A3, A4, A5, A6, A7
+
+AS3935 AS3935(SPItransfer,SS,IRQpin);
 
 void setup()
 {
@@ -57,7 +61,7 @@ void setup()
   // NB! max SPI clock speed that chip supports is 2MHz,
   // but never use 500kHz, because that will cause interference
   // to lightning detection circuit
-  SPI.setClockDivider(SPI_CLOCK_DIV16);
+  SPI.setClockDivider(SPI_CLOCK_DIV64);
   // and chip is MSB first
   SPI.setBitOrder(MSBFIRST);
   // reset all internal register values to defaults
@@ -79,13 +83,8 @@ void setup()
   AS3935IrqTriggered = 0;
   // Using interrupts means you do not have to check for pin being set continiously, chip does that for you and
   // notifies your code
-  // demo is written and tested on ChipKit MAX32, irq pin is connected to max32 pin 2, that corresponds to interrupt 1
-  // look up what pins can be used as interrupts on your specific board and how pins map to int numbers
+  attachInterrupt(IRQpin,AS3935Irq,RISING);
 
-  // ChipKit Max32 - irq connected to pin 2
-  attachInterrupt(1,AS3935Irq,RISING);
-  // uncomment line below and comment out line above for Arduino Mega 2560, irq still connected to pin 2
-  // attachInterrupt(0,AS3935Irq,RISING);
 }
 
 void loop()
